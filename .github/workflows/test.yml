@@ -28,7 +28,21 @@ jobs:
           CUSTOM_CONFIG: ${{ vars.CUSTOM_CONFIG }}
         run: |
           export DEBUG=true
-          printf "%b\n" "$CUSTOM_CONFIG" > config/custom.yaml
+          python - <<'PY'
+from pathlib import Path
+import os
+import sys
+
+sys.path.insert(0, str(Path("src").resolve()))
+from zotero_arxiv_daily.config_override import apply_custom_config_override
+
+applied, message = apply_custom_config_override(
+    os.environ.get("CUSTOM_CONFIG"),
+    Path("config/custom.yaml"),
+)
+if not applied:
+    print(f"::warning::{message}")
+PY
           echo "Use custom config: "
           cat config/custom.yaml
           uv run src/zotero_arxiv_daily/main.py
