@@ -55,17 +55,6 @@ class Executor:
             paths = [get_collection_path(col) for col in c['data']['collections']]
             c['paths'] = paths
         logger.info(f"Fetched {len(corpus)} zotero papers")
-        # ===== 临时调试代码开始 =====
-        print("===== DEBUG: 所有 Zotero 论文路径 =====")
-        for c in corpus:
-            print("TITLE:", c['data']['title'])
-            print("PATHS:", c['paths'])
-        print("===== DEBUG: 全部 collection 名称 =====")
-        for k, v in collections.items():
-            print("COLLECTION KEY:", k, "| NAME:", v['data']['name'], "| PARENT:", v['data']['parentCollection'])
-        print("===== DEBUG END =====")
-        # ===== 临时调试代码结束 =====
-
         return [CorpusPaper(
             title=c['data']['title'],
             abstract=c['data']['abstractNote'],
