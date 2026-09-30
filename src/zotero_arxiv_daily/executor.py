@@ -106,6 +106,7 @@ class Executor:
             logger.info(f"Retrieved {len(papers)} {source} papers")
             all_papers.extend(papers)
         logger.info(f"Total {len(all_papers)} papers retrieved from all sources")
+        """
         # ===== 关键词过滤开始 =====
         # 必须命中其中之一（分割相关）
         REQUIRED_ANY = ["segmentation", "semantic segmentation"]
@@ -125,6 +126,7 @@ class Executor:
         logger.info(f"After keyword filter: {len(filtered)} papers remain (from {len(all_papers)})")
         all_papers = filtered
         # ===== 关键词过滤结束 =====
+        """
         reranked_papers = []
         if len(all_papers) > 0:
             logger.info("Reranking papers...")
