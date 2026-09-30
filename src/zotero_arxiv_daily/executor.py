@@ -107,14 +107,20 @@ class Executor:
             all_papers.extend(papers)
         logger.info(f"Total {len(all_papers)} papers retrieved from all sources")
         # ===== 关键词过滤开始 =====
-        # 要求标题或摘要里必须出现下列关键词（AND 逻辑，全部命中）
-        REQUIRED_KEYWORDS = ["segmentation", "open-vocabulary"]          # 必须命中
-        OPTIONAL_KEYWORDS = ["training-free", "training free", "clip"]
+        # 必须命中其中之一（分割相关）
+        REQUIRED_ANY = ["segmentation", "semantic segmentation"]
+        # 必须命中（开放词汇）
+        REQUIRED_MUST = ["open-vocabulary", "open vocabulary"]
         # 至少再命中一个
+        OPTIONAL_KEYWORDS = ["training-free", "training free", "clip", "vision-language", "zero-shot"]
+
         filtered = []
         for p in all_papers:
             text = (p.title + " " + (p.abstract or "")).lower()
-            if all(kw in text for kw in REQUIRED_KEYWORDS) and any(kw in text for kw in OPTIONAL_KEYWORDS):
+            hit_required_any = any(kw in text for kw in REQUIRED_ANY)
+            hit_required_must = any(kw in text for kw in REQUIRED_MUST)
+            hit_optional = any(kw in text for kw in OPTIONAL_KEYWORDS)
+            if hit_required_any and hit_required_must and hit_optional:
                 filtered.append(p)
         logger.info(f"After keyword filter: {len(filtered)} papers remain (from {len(all_papers)})")
         all_papers = filtered
