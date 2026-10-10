@@ -97,11 +97,13 @@ class Executor:
             logger.error(f"No zotero papers found. Please check your zotero settings:\n{self.config.zotero}")
             return
         all_papers = []
+        """
         # ===== 临时诊断 =====
         for c in corpus[:5]:
             print("CORPUS TITLE:", c.title)
             print("CORPUS ABSTRACT:", (c.abstract or "")[:300])
         # ===== 临时诊断结束 =====
+        """
         for source, retriever in self.retrievers.items():
             logger.info(f"Retrieving {source} papers...")
             papers = retriever.retrieve_papers()
