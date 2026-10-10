@@ -97,6 +97,11 @@ class Executor:
             logger.error(f"No zotero papers found. Please check your zotero settings:\n{self.config.zotero}")
             return
         all_papers = []
+        # ===== 临时诊断 =====
+        for c in corpus[:5]:
+            print("CORPUS TITLE:", c.title)
+            print("CORPUS ABSTRACT:", (c.abstract or "")[:300])
+        # ===== 临时诊断结束 =====
         for source, retriever in self.retrievers.items():
             logger.info(f"Retrieving {source} papers...")
             papers = retriever.retrieve_papers()
@@ -106,27 +111,6 @@ class Executor:
             logger.info(f"Retrieved {len(papers)} {source} papers")
             all_papers.extend(papers)
         logger.info(f"Total {len(all_papers)} papers retrieved from all sources")
-        """
-        # ===== 关键词过滤开始 =====
-        # 必须命中其中之一（分割相关）
-        REQUIRED_ANY = ["segmentation", "semantic segmentation"]
-        # 必须命中（开放词汇）
-        REQUIRED_MUST = ["open-vocabulary", "open vocabulary"]
-        # 至少再命中一个
-        OPTIONAL_KEYWORDS = ["training-free", "training free", "clip", "vision-language", "zero-shot"]
-
-        filtered = []
-        for p in all_papers:
-            text = (p.title + " " + (p.abstract or "")).lower()
-            hit_required_any = any(kw in text for kw in REQUIRED_ANY)
-            hit_required_must = any(kw in text for kw in REQUIRED_MUST)
-            hit_optional = any(kw in text for kw in OPTIONAL_KEYWORDS)
-            if hit_required_any and hit_required_must and hit_optional:
-                filtered.append(p)
-        logger.info(f"After keyword filter: {len(filtered)} papers remain (from {len(all_papers)})")
-        all_papers = filtered
-        # ===== 关键词过滤结束 =====
-        """
         reranked_papers = []
         if len(all_papers) > 0:
             logger.info("Reranking papers...")
